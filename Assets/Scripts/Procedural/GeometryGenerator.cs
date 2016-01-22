@@ -12,6 +12,7 @@ public class GeometryGenerator : MonoBehaviour
 	public GameObject platform;
 	public GameObject conditionalPlatform;
 	public GameObject lift;
+	public GameObject light;
 	public List<GameObject> platformArray;
 	GameObject nextPlatform;
 	
@@ -19,6 +20,8 @@ public class GeometryGenerator : MonoBehaviour
 	
 	private int globalRN = -1;
 	private int globalLiftRN = -1;
+	
+	public static int platformsInstantiated = 0;
 	
 	public Material conditionalRed, conditionalGreen, conditionalBlue, conditionalYellow, conditionalTurquoise;
 	
@@ -33,12 +36,14 @@ public class GeometryGenerator : MonoBehaviour
 	{	
 		platformArray = new List<GameObject>();
 		currentPlatformSize = platform.transform.localScale;
+		geometryGenReady = true;
 	}
 	
 	void Update ()
 	{		
 		if(geometryGenReady)
 		{
+			platformsInstantiated = 0;
 			geometryGenReady = false;
 			
 			FitGeometryToNodeArray();
@@ -51,6 +56,8 @@ public class GeometryGenerator : MonoBehaviour
 	{
 		foreach(Node x in WalkGenerator.nodeArray)
 		{
+			platformsInstantiated++;
+		
 			// If moving upwards between platforms, reduce platform size
 		
 			if(x.lastDirection.y > 0f)
@@ -73,6 +80,11 @@ public class GeometryGenerator : MonoBehaviour
 				nextPlatform = Instantiate (conditionalPlatform, x.position, Quaternion.identity) as GameObject;
 				nextPlatform.GetComponent<ConditionalPlatform>().player = player;
 				nextPlatform.GetComponent<ConditionalPlatform>().wall = WalkGenerator.topWall.transform;
+				
+				if(platformsInstantiated != WalkGenerator.nodeArray.Count)
+				{
+					Instantiate (light, new Vector3 (x.position.x, x.position.y + (2 * currentPlatformSize.y), x.position.z), Quaternion.identity);
+				}
 				
 				globalRN = Random.Range (Mathf.Max (globalLiftRN - 1, (int)Colours.Red), Mathf.Min (globalLiftRN + 2, (int)Colours.Blue + 1));
 				
@@ -118,6 +130,11 @@ public class GeometryGenerator : MonoBehaviour
 			else
 			{
 				nextPlatform = Instantiate (platform, x.position, Quaternion.identity) as GameObject;
+				
+				if(platformsInstantiated != WalkGenerator.nodeArray.Count)
+				{
+					Instantiate (light, new Vector3 (x.position.x, x.position.y + (2 * currentPlatformSize.y), x.position.z), Quaternion.identity);
+				}
 			}
 			
 			nextPlatform.transform.localScale = currentPlatformSize;
@@ -168,9 +185,7 @@ public class GeometryGenerator : MonoBehaviour
 		float nr = UnityEngine.Random.Range (0f, 1f);
 		
 		float xPos = nextPlatform.transform.position.x;
-		float zPos = nextPlatform.transform.position.z;
-		
-		
+		float zPos = nextPlatform.transform.position.z;		
 	}
 	
 	// Creates a lift on a platform
@@ -212,6 +227,9 @@ public class GeometryGenerator : MonoBehaviour
 		
 		newLift.GetComponent<LiftPad>().player = player;
 		newLift.GetComponent<LiftPad>().wall = WalkGenerator.topWall.transform;
+		newLift.transform.localScale = new Vector3 (newLift.transform.localScale.x * currentPlatformSize.x / platform.transform.localScale.x,
+													newLift.transform.localScale.y,
+													newLift.transform.localScale.z * currentPlatformSize.z / platform.transform.localScale.z);
 		
 		globalLiftRN = UnityEngine.Random.Range ((int)Colours.Red, (int)Colours.Blue + 1);
 		
@@ -223,7 +241,6 @@ public class GeometryGenerator : MonoBehaviour
 		else if(globalLiftRN == 1)
 		{
 			newLift.GetComponent<Renderer>().material = conditionalYellow;
-			
 		}
 		
 		else if(globalLiftRN == 2)
@@ -256,6 +273,7 @@ public class GeometryGenerator : MonoBehaviour
 		float nr = UnityEngine.Random.Range(0, 2);
 		
 		GameObject newPath = Instantiate (path, nextPlatform.transform.position + (x.nextDirection / 2), Quaternion.identity) as GameObject;
+		Instantiate (light, new Vector3 (newPath.transform.position.x, newPath.transform.position.y + (2 * newPath.transform.localScale.y), newPath.transform.position.z), Quaternion.identity);
 		
 		// If the most recently created platform is conditional (and not green), swap the path around so whichever of red/blue is nearest to that colour will be closest to the platform
 		

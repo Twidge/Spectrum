@@ -70,15 +70,7 @@ public class WalkGenerator : MonoBehaviour
 		positiveXWall = boundaryWalls.transform.FindChild ("Opposite Side Wall One").transform;
 		negativeZWall = boundaryWalls.transform.FindChild ("Side Wall Two").transform;
 		positiveZWall = boundaryWalls.transform.FindChild ("Opposite Side Wall Two").transform;
-	
-		// Default values if probabilities do not sum to 1
-	
-		if(XLikelihood + ZLikelihood + YLikelihood != 1f)
-		{
-			XLikelihood = ZLikelihood = 0.4f;
-			YLikelihood = 0.2f;
-		}
-		
+
 		// Create startNode, seed random generator with system time for "true" randomness
 	
 		startNode = new Node(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f));

@@ -22,6 +22,7 @@ public class PlayerControl : MonoBehaviour
 	// public Image fade;
 	
 	private const int M_PROCEDURAL_LEVEL = 7;
+	private const int M_MENU_LEVEL = 0;
 
 	// Use this for initialization
 	void Start ()
@@ -83,12 +84,12 @@ public class PlayerControl : MonoBehaviour
 		
 		// If the current level is not the menu, Escape moves the player to the menu - otherwise it quits the game
 		
-		if(Input.GetKey (KeyCode.Escape) && Application.loadedLevel != 0)
+		if(Input.GetKey (KeyCode.Escape) && Application.loadedLevel != M_MENU_LEVEL)
 		{
-			Application.LoadLevel (0);
+			Application.LoadLevel (M_MENU_LEVEL);
 		}
 		
-		if(Input.GetKey (KeyCode.Escape) && Application.loadedLevel == 0)
+		if(Input.GetKey (KeyCode.Escape) && Application.loadedLevel == M_MENU_LEVEL)
 		{
 			Application.Quit();
 		}
@@ -187,7 +188,6 @@ public class PlayerControl : MonoBehaviour
 		}
 		
 		// NOTE: more than four checks are necessary. Just doing i < 4 and PI / 2 fails when player lands on the exact corner of a platform.
-		// Interesting question: is five enough? I think so, but not sure.
 		
 		for(int i = 0; i < 8; i++)
 		{

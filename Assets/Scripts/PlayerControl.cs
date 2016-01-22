@@ -151,15 +151,7 @@ public class PlayerControl : MonoBehaviour
 		
 		if(collision.collider.tag == "Goal")
 		{
-			if(Application.loadedLevel == 0)
-			{
-				MenuFadeInOut.levelEnd = true;
-			}
-			
-			else
-			{
-				// fade.GetComponent<FadeInOut>().levelEnd = true;
-			}	
+			Application.LoadLevel (Application.loadedLevel + 1);	
 		}
 		
 		// If colliding with exit button, quit game
